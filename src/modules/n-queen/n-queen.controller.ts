@@ -6,7 +6,7 @@ export class NQueenController {
   constructor(private readonly nQueenService: NQueenService) {}
 
   @Post(':numberOfQueens')
-  sendToProcess(@Param('numberOfQueens') numberOfQueens: number) {
+  sendToProcess(@Param('numberOfQueens') numberOfQueens: number): Promise<any> {
     return this.nQueenService.sendToProcess(numberOfQueens);
   }
 }
