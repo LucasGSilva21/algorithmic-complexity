@@ -1,13 +1,19 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Connection, Channel, connect, Message } from 'amqplib';
 
+@Injectable()
 export class RabbitMQServer {
+  private url: string;
   private conn: Connection;
   private channel: Channel;
 
-  constructor(private uri: string) {}
+  constructor(private configService: ConfigService) {}
 
   async start(): Promise<void> {
-    this.conn = await connect(this.uri);
+    const url = this.configService.get<string>('rabbitmq.url');
+    this.url = url;
+    this.conn = await connect(this.url);
     this.channel = await this.conn.createChannel();
   }
 

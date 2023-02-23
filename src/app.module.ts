@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NQueenModule } from './modules/n-queen/n-queen.module';
+import configuration from './shared/config/configuration';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'postgres',

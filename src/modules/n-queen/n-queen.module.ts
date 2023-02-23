@@ -11,7 +11,7 @@ import { RabbitMQServer } from '../../shared/infra/rabbitmq-server';
   providers: [
     {
       provide: 'RABBIT_MQ_SERVER',
-      useValue: new RabbitMQServer('amqp://admin:admin@rabbitmq:5672'),
+      useClass: RabbitMQServer,
     },
     NQueenService,
   ],
