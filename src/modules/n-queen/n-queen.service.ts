@@ -1,17 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NQueen } from './entities/n-queen.entity';
 import { ProcessStatus } from '../../shared/enums/process-status.enum';
-import { RabbitMQServer } from '../../shared/infra/rabbitmq-server';
 
 @Injectable()
 export class NQueenService {
   constructor(
-    @InjectRepository(NQueen)
-    private nQueensRepository: Repository<NQueen>,
-    @Inject('RABBIT_MQ_SERVER')
-    private rabbitMQServer: RabbitMQServer,
+    @InjectRepository(NQueen) private nQueensRepository: Repository<NQueen>,
+    @Inject('NQUEEN_SERVICE') private readonly client: ClientProxy,
   ) {}
 
   async sendToProcess(numberOfQueens: number) {
@@ -22,12 +20,11 @@ export class NQueenService {
 
     const { id } = await this.nQueensRepository.save(newNQueen);
 
-    await this.rabbitMQServer.start();
-    await this.rabbitMQServer.publishInQueue(
-      'n-queen',
+    const message = this.client.send(
+      { cmd: 'greeting-async' },
       JSON.stringify({ id, numberOfQueens }),
     );
 
-    return { id };
+    return message;
   }
 }
