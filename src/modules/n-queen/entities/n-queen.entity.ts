@@ -20,7 +20,7 @@ export class NQueen {
 
   @Column({
     name: 'total_time_to_process',
-    type: 'time',
+    type: 'float',
     nullable: true,
   })
   totalTimeToProcess?: number;

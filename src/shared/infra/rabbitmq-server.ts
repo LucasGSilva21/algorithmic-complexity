@@ -42,15 +42,12 @@ export class RabbitMQServer implements OnModuleInit, OnApplicationShutdown {
     await this.close();
   }
 
-  async addSetup(
-    queue: string,
-    handleMessage: (message: Message) => void | Promise<void>,
-  ): Promise<void> {
-    this.channelWrapper.addSetup(function (channel) {
+  async addSetup(queue: string, handleMessage: any): Promise<void> {
+    this.channelWrapper.addSetup((channel) => {
       return Promise.all([
         channel.assertQueue(queue),
         channel.consume(queue, (message) => {
-          handleMessage(message);
+          handleMessage.process(message);
           channel.ack(message);
         }),
       ]);
