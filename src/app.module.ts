@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NQueenModule } from './modules/n-queen/n-queen.module';
+import { SudokuModule } from './modules/sudoku/sudoku.module';
 import configuration from './shared/config/configuration';
 
 @Module({
@@ -23,6 +24,7 @@ import configuration from './shared/config/configuration';
       synchronize: true,
     }),
     NQueenModule,
+    SudokuModule,
   ],
   controllers: [AppController],
   providers: [AppService],
