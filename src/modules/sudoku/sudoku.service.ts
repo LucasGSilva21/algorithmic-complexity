@@ -36,7 +36,7 @@ export class SudokuService {
 
   async sendToProcess(input: JSON) {
     const newSudoku = this.sudokuRepository.create({
-      input,
+      input: input['sudoku'],
       status: ProcessStatus.PENDING,
     });
 
@@ -56,7 +56,7 @@ export class SudokuService {
     const sudoku = await this.sudokuRepository.findOne({ where: { id } });
     if (!sudoku) return;
 
-    const input = sudoku.input['sudoku'] as unknown as number[][];
+    const input = sudoku.input as unknown as number[][];
 
     const { result, totalTimeToProcess } =
       await this.sudokuAlgorithmProvider.handle(input);
