@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "pm2-runtime start dist/main.js -i max",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -31,6 +31,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "pg": "^8.9.0",
+    "pm2": "^5.2.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "typeorm": "^0.3.12"

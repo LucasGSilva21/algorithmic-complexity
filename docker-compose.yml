@@ -19,7 +19,7 @@ services:
   app:
     build: .
     container_name: nest-api-container
-    entrypoint: sh -c "dockerize -wait tcp://postgres:5432 -timeout 30s && npm run start:dev"
+    entrypoint: sh -c "dockerize -wait tcp://postgres:5432 -timeout 30s && npm run start"
     volumes:
       - .:/home/node/app
       - /home/node/app/node_modules
