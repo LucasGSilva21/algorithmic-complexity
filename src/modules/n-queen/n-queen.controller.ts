@@ -6,6 +6,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { NQueenService } from './n-queen.service';
+import { SendToProcessNQueen } from './dtos/send-to-process-n-queen.dto';
 
 @Controller('api/v1/n-queen')
 export class NQueenController {
@@ -28,7 +29,8 @@ export class NQueenController {
   }
 
   @Post(':numberOfQueens')
-  async sendToProcess(@Param('numberOfQueens') numberOfQueens: number) {
+  async sendToProcess(@Param() params: SendToProcessNQueen) {
+    const { numberOfQueens } = params;
     return this.nQueenService.sendToProcess(numberOfQueens);
   }
 }
