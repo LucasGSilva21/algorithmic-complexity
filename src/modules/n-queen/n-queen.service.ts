@@ -56,8 +56,9 @@ export class NQueenService {
     const nQueen = await this.nQueensRepository.findOne({ where: { id } });
     if (!nQueen) return;
 
-    const { result, totalTimeToProcess } =
-      await this.nQueensAlgorithmProvider.handle(nQueen.numberOfQueens);
+    const { result, totalTimeToProcess } = this.nQueensAlgorithmProvider.handle(
+      nQueen.numberOfQueens,
+    );
 
     const updateData = {
       status: ProcessStatus.COMPLETED,
