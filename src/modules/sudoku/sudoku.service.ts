@@ -59,7 +59,7 @@ export class SudokuService {
     const input = sudoku.input as unknown as number[][];
 
     const { result, totalTimeToProcess } =
-      await this.sudokuAlgorithmProvider.handle(input);
+      this.sudokuAlgorithmProvider.handle(input);
 
     const updateData = {
       status: ProcessStatus.COMPLETED,
