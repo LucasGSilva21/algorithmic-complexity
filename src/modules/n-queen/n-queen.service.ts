@@ -25,7 +25,16 @@ export class NQueenService {
   }
 
   async findAll() {
-    const nQueens = await this.nQueensRepository.find();
+    const nQueens = await this.nQueensRepository.find({
+      select: {
+        id: true,
+        numberOfQueens: true,
+        totalTimeToProcess: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
     return nQueens;
   }
 

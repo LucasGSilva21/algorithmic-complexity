@@ -51,6 +51,9 @@ export class NQueensAlgorithmProvider {
     const result = this.solve(numberOfQueens) as any;
     const end = performance.now();
 
+    this.result = [];
+    this.board = [];
+
     return {
       result,
       totalTimeToProcess: Number(end - start),

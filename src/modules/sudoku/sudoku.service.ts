@@ -25,7 +25,15 @@ export class SudokuService {
   }
 
   async findAll() {
-    const sudokus = await this.sudokuRepository.find();
+    const sudokus = await this.sudokuRepository.find({
+      select: {
+        id: true,
+        totalTimeToProcess: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
     return sudokus;
   }
 
