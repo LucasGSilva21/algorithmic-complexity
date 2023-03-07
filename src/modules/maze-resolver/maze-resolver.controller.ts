@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   Param,
@@ -27,8 +28,8 @@ export class MazeResolverController {
     return mazeResolver;
   }
 
-  @Post(':size')
-  async sendToProcess(@Param('size') size: number) {
-    return this.mazeResolverService.sendToProcess(size);
+  @Post()
+  async sendToProcess(@Body() input: JSON) {
+    return this.mazeResolverService.sendToProcess(input);
   }
 }

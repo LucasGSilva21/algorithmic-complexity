@@ -28,7 +28,6 @@ export class MazeResolverService {
     const mazeResolvers = await this.mazeResolverRepository.find({
       select: {
         id: true,
-        size: true,
         totalTimeToProcess: true,
         status: true,
         createdAt: true,
@@ -45,9 +44,9 @@ export class MazeResolverService {
     return mazeResolver;
   }
 
-  async sendToProcess(size: number) {
+  async sendToProcess(input: JSON) {
     const newMazeResolver = this.mazeResolverRepository.create({
-      size,
+      input: input['maze'],
       status: ProcessStatus.PENDING,
     });
 
@@ -70,7 +69,9 @@ export class MazeResolverService {
     if (!mazeResolver) return;
 
     const { result, totalTimeToProcess } =
-      this.mazeResolverAlgorithmProvider.handle(mazeResolver.size);
+      this.mazeResolverAlgorithmProvider.handle(
+        mazeResolver.input as unknown as number[][],
+      );
 
     const updateData = {
       status: ProcessStatus.COMPLETED,

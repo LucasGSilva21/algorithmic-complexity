@@ -13,9 +13,10 @@ export class MazeResolver {
   id: string;
 
   @Column({
-    type: 'int',
+    name: 'input',
+    type: 'json',
   })
-  size: number;
+  input: JSON;
 
   @Column({
     name: 'total_time_to_process',
