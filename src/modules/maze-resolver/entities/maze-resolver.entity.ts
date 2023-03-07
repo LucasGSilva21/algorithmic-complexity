@@ -16,7 +16,7 @@ export class MazeResolver {
     name: 'input',
     type: 'json',
   })
-  input: JSON;
+  input: Array<Array<number>>;
 
   @Column({
     name: 'total_time_to_process',

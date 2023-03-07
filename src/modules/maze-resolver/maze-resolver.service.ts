@@ -26,15 +26,20 @@ export class MazeResolverService {
 
   async findAll() {
     const mazeResolvers = await this.mazeResolverRepository.find({
-      select: {
-        id: true,
-        totalTimeToProcess: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: [
+        'id',
+        'input',
+        'totalTimeToProcess',
+        'status',
+        'createdAt',
+        'updatedAt',
+      ],
     });
-    return mazeResolvers;
+
+    return mazeResolvers.map((mazeResolver) => ({
+      ...mazeResolver,
+      input: mazeResolver.input.length,
+    }));
   }
 
   async findOne(id: string) {
@@ -69,9 +74,7 @@ export class MazeResolverService {
     if (!mazeResolver) return;
 
     const { result, totalTimeToProcess } =
-      this.mazeResolverAlgorithmProvider.handle(
-        mazeResolver.input as unknown as number[][],
-      );
+      this.mazeResolverAlgorithmProvider.handle(mazeResolver.input);
 
     const updateData = {
       status: ProcessStatus.COMPLETED,
