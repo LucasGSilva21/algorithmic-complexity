@@ -1,4 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import * as PriorityQueue from 'priorityqueuejs';
+
+interface Node {
+  row: number;
+  col: number;
+  distance: number;
+  previous: Node | null;
+}
 
 @Injectable()
 export class MazeResolverAlgorithmProvider {
@@ -12,7 +20,16 @@ export class MazeResolverAlgorithmProvider {
     const endRow = matrix.length - 1;
     const endCol = matrix.length - 1;
 
-    const result = this.solveMaze(matrix, startRow, startCol, endRow, endCol);
+    const result = this.solveMaze(
+      matrix,
+      startRow,
+      startCol,
+      endRow,
+      endCol,
+    ).map((n) => ({
+      row: n.row,
+      col: n.col,
+    })) as unknown as JSON;
 
     const end = performance.now();
 
@@ -22,35 +39,43 @@ export class MazeResolverAlgorithmProvider {
     };
   }
 
-  solveMaze(matrix, startRow, startCol, endRow, endCol) {
-    // Define an array to keep track of visited cells and paths
-    const visited = [];
-    const paths = [];
+  solveMaze(
+    matrix: number[][],
+    startRow: number,
+    startCol: number,
+    endRow: number,
+    endCol: number,
+  ): Node[] | null {
+    // Define an array to keep track of the nodes in the maze
+    const nodes: Node[][] = [];
 
-    // Generate rows for the visited and paths arrays
+    // Generate rows for the nodes array
     for (let i = 0; i < matrix.length; i++) {
-      visited.push([]);
-      paths.push([]);
+      nodes.push([]);
 
-      // Generate columns for the visited and paths arrays
+      // Generate columns for the nodes array
       for (let j = 0; j < matrix[0].length; j++) {
-        visited[i].push(false);
-        paths[i].push(null);
+        nodes[i].push({
+          row: i,
+          col: j,
+          distance: Infinity,
+          previous: null,
+        });
       }
     }
 
-    // Define a recursive function to perform the depth-first search
-    function dfs(row, col, path) {
-      // Check if we've reached the end of the maze
-      if (row === endRow && col === endCol) {
-        return path;
-      }
+    // Set the distance of the starting node to 0
+    const startNode = nodes[startRow][startCol];
+    startNode.distance = 0;
 
-      // Mark the current cell as visited and set the path
-      visited[row][col] = true;
-      paths[row][col] = path;
+    // Define a priority queue to store the nodes to be visited
+    const queue = new PriorityQueue<Node>((a, b) => a.distance - b.distance);
+    queue.enq(startNode);
 
-      // Check the adjacent cells
+    // Define a function to get the neighbors of a node
+    function getNeighbors(node: Node): Node[] {
+      const neighbors: Node[] = [];
+
       const directions = [
         { row: -1, col: 0 }, // Up
         { row: 1, col: 0 }, // Down
@@ -59,33 +84,57 @@ export class MazeResolverAlgorithmProvider {
       ];
 
       for (let i = 0; i < directions.length; i++) {
-        const nextRow = row + directions[i].row;
-        const nextCol = col + directions[i].col;
+        const nextRow = node.row + directions[i].row;
+        const nextCol = node.col + directions[i].col;
 
-        // Check if the next cell is valid and unvisited
+        // Check if the next cell is valid
         if (
           nextRow >= 0 &&
           nextRow < matrix.length &&
           nextCol >= 0 &&
           nextCol < matrix[0].length &&
-          matrix[nextRow][nextCol] === 0 &&
-          !visited[nextRow][nextCol]
+          matrix[nextRow][nextCol] === 0
         ) {
-          // Recursively call dfs on the next cell and update the path
-          const nextPath = [...path, { row: nextRow, col: nextCol }];
-          const result = dfs(nextRow, nextCol, nextPath);
-          if (result) {
-            return result;
-          }
+          const neighbor = nodes[nextRow][nextCol];
+          neighbors.push(neighbor);
         }
       }
 
-      // If we've explored all possible paths and haven't found the end, backtrack
-      return null;
+      return neighbors;
     }
 
-    // Call dfs on the starting cell and return the path
-    const startPath = [{ row: startRow, col: startCol }];
-    return dfs(startRow, startCol, startPath);
+    // Perform Dijkstra's algorithm
+    while (!queue.isEmpty()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const current = queue.deq()!;
+
+      // Check if we've reached the end of the maze
+      if (current.row === endRow && current.col === endCol) {
+        // Build the path from the end node to the start node
+        const path: Node[] = [];
+        let node: Node | null = current;
+        while (node !== null) {
+          path.unshift(node);
+          node = node.previous;
+        }
+        return path;
+      }
+
+      // Get the neighbors of the current node
+      const neighbors = getNeighbors(current);
+
+      // Update the distance of each neighbor if it is less than its current distance
+      for (const neighbor of neighbors) {
+        const distance = current.distance + 1;
+        if (distance < neighbor.distance) {
+          neighbor.distance = distance;
+          neighbor.previous = current;
+          queue.enq(neighbor);
+        }
+      }
+    }
+
+    // If we've explored all possible paths and haven't found the end, return null
+    return null;
   }
 }
