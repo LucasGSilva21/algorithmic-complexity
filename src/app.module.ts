@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NQueenModule } from './modules/n-queen/n-queen.module';
 import { SudokuModule } from './modules/sudoku/sudoku.module';
+import { MazeResolverModule } from './modules/maze-resolver/maze-resolver.module';
 import configuration from './shared/config/configuration';
 
 @Module({
@@ -29,6 +30,7 @@ import configuration from './shared/config/configuration';
     }),
     NQueenModule,
     SudokuModule,
+    MazeResolverModule,
   ],
   controllers: [AppController],
   providers: [AppService],
